@@ -4,10 +4,12 @@ class ProductManager {
 
     #products
     #path
+   
 
     constructor(){
-        this.#products = []
         this.#path = 'product.json'
+        this.#products = this.getProducts()
+        
     }
     
 
@@ -17,11 +19,10 @@ class ProductManager {
             let data
             if(fs.existsSync(this.#path)){
                 const dataProduct = fs.readFileSync(this.#path, 'utf-8')
-                this.#products = JSON.parse(dataProduct)
-                data =  this.#products 
+                return JSON.parse(dataProduct)
+                 
             } else {
                 fs.writeFileSync(this.#path, JSON.stringify(this.#products))
-                data = this.#products 
             }
             return data
         } catch (error) {
@@ -67,7 +68,7 @@ class ProductManager {
 
         getProductById(id){
          const productById = this.#products.find(e=> e.id === id) 
-
+            
          return productById ? productById : "Not found"
     }   
     
@@ -134,3 +135,5 @@ console.log(product.deleteProduct(3))
 console.log(product.deleteProduct(10)) 
 
 console.log(product.getProducts()) 
+
+console.log("producto por id", product.getProductById(4))
