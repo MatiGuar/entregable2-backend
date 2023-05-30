@@ -114,7 +114,7 @@ export default class ProductManager {
 
 }
 
-const product = new ProductManager() 
+/* const product = new ProductManager() 
 
 product.addProduct("Caramelo", "Dulce", 20, "thumbnail1", "12F24R", 100)
 product.addProduct("Jugo", "Manzana", 160, "thumbnail1", "12JG44M", 100)
@@ -129,9 +129,7 @@ console.log("producto por id", product.getProductById(1))
 product.updateProduct(2,"description", "Agridulce")  
 console.log(product.getProducts())
 
-console.log(product.deleteProduct(3))
-console.log(product.deleteProduct(10)) 
 
 console.log(product.getProducts()) 
 
-console.log("producto por id", product.getProductById(4))
+console.log("producto por id", product.getProductById(4)) */

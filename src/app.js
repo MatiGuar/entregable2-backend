@@ -9,17 +9,24 @@ app.get('/', function (req, res) {
   res.send('Desafío 3')
 })
 
-app.get('/products', (res, req) => {
-    const {limit} = req.query
+app.get('/products', (req, res) => {
+
     const prod = productos.getProducts()
-    let cantProd
-    if(limit) {
-        cantProd = prod.slice(0, limit)
+    const {limit} = req.query
+    let cantidadProdcts
+    if (limit) {
+        cantidadProdcts = prod.slice(0, limit)
     } else {
-        cantProd = prod
+        cantidadProdcts = prod
     }
-    res.json ({total : prod.length, elemento: cantProd})   
-}) 
+    return res.json( {total: prod.length, elementos: cantidadProdcts})
+   
+})
+
+app.get ('/products/:id', (req, res)=>{
+    const { id } = req.params
+    return res.json(productos.getProductById(parseInt(id))) 
+})
 
 app.listen(3000, ()=>{
     console.log("Server is running on port 3000.")
