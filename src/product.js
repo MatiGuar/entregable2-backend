@@ -1,6 +1,6 @@
-const fs = require('fs')
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 
-class ProductManager {
+export default class ProductManager {
 
     #products
     #path
@@ -17,12 +17,12 @@ class ProductManager {
         
         try {
             let data
-            if(fs.existsSync(this.#path)){
-                const dataProduct = fs.readFileSync(this.#path, 'utf-8')
+            if(existsSync(this.#path)){
+                const dataProduct = readFileSync(this.#path, 'utf-8')
                 return JSON.parse(dataProduct)
                  
             } else {
-                fs.writeFileSync(this.#path, JSON.stringify(this.#products))
+                writeFileSync(this.#path, JSON.stringify(this.#products))
             }
             return data
         } catch (error) {
@@ -54,7 +54,7 @@ class ProductManager {
         } else {
             this.#products.push(product)
             try {
-                fs.writeFileSync(this.#path, JSON.stringify(this.#products))
+                writeFileSync(this.#path, JSON.stringify(this.#products))
             } catch (error) {
                 console.log(error)
             }
@@ -87,7 +87,7 @@ class ProductManager {
         } else {
             product[campo] = valor
         }
-        fs.writeFileSync(this.#path, JSON.stringify(this.#products))
+        writeFileSync(this.#path, JSON.stringify(this.#products))
         } catch (error) {
             console.log(error)
         }
@@ -100,8 +100,8 @@ class ProductManager {
             const indexId = this.#products.findIndex(product => product.id === id)
         
         if (indexId >= 0){
+            writeFileSync(this.#path, JSON.stringify(this.#products))
             this.#products.splice(indexId, 1)
-            fs.writeFileSync(this.#path, JSON.stringify(this.#products))
             return `El producto con id: ${id} ha sido eliminando correctamente`
         } else {
             return `No existe ningun producto con id: ${id}`
@@ -115,8 +115,6 @@ class ProductManager {
 }
 
 const product = new ProductManager() 
-
-/* console.log(product.getProducts()) */
 
 product.addProduct("Caramelo", "Dulce", 20, "thumbnail1", "12F24R", 100)
 product.addProduct("Jugo", "Manzana", 160, "thumbnail1", "12JG44M", 100)
