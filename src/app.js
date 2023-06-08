@@ -1,33 +1,22 @@
 import express from 'express';
-import ProductManager from './product.js'
+import cart from "./routes/cart.router.js"
+import products from "./routes/products.router.js"
+import ProductManager from './models/product.js'
 
 const app = express()
-const productos = new ProductManager('./product.json')
+const port = 8080
 
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+app.use("/static", express.static("../public"))
+app.use("/api/products", products)
+app.use("/api/cart", cart)
 
-app.get('/', function (req, res) {
-  res.send('Desafío 3')
+app.get('/', (req,res) => {
+    res.send("HOME")
 })
 
-app.get('/products', (req, res) => {
-
-    const prod = productos.getProducts()
-    const {limit} = req.query
-    let cantidadProdcts
-    if (limit) {
-        cantidadProdcts = prod.slice(0, limit)
-    } else {
-        cantidadProdcts = prod
-    }
-    return res.json( {total: prod.length, elementos: cantidadProdcts})
-   
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
 })
 
-app.get ('/products/:id', (req, res)=>{
-    const { id } = req.params
-    return res.json(productos.getProductById(parseInt(id))) 
-})
-
-app.listen(3000, ()=>{
-    console.log("Server is running on port 3000.")
-})

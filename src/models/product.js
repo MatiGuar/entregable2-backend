@@ -7,7 +7,7 @@ export default class ProductManager {
    
 
     constructor(){
-        this.#path = 'product.json'
+        this.#path = '/product.json'
         this.#products = this.getProducts()
         
     }
@@ -22,32 +22,26 @@ export default class ProductManager {
                 return JSON.parse(dataProduct)
                  
             } else {
-                writeFileSync(this.#path, JSON.stringify(this.#products))
+                data = []
             }
             return data
         } catch (error) {
             console.log(error)
         }
         
-
         
     }
 
 
 
 
-    addProduct(title, description, price, thumbnail, code, stock) {
+
+    addProduct(title, description, code, price, status, stock, category) {
         let product = {
             id: this.#products.length + 1,
-            title,
-            description,
-            price,
-            thumbnail,
-            code,
-            stock,
         }
 
-        if (!title || !description || !price || !thumbnail || !code || !stock){
+        if (!title || !description || !code || !price || !status || !stock || !category){
             console.log('Todos los campos son obligatorios')
         } else if (this.#products.some(product => product.code === code)){
             console.log('El codigo del producto que desea agregar ya existe.')
@@ -100,8 +94,9 @@ export default class ProductManager {
             const indexId = this.#products.findIndex(product => product.id === id)
         
         if (indexId >= 0){
-            writeFileSync(this.#path, JSON.stringify(this.#products))
             this.#products.splice(indexId, 1)
+            writeFileSync(this.#path, JSON.stringify(this.#products))
+            
             return `El producto con id: ${id} ha sido eliminando correctamente`
         } else {
             return `No existe ningun producto con id: ${id}`
@@ -114,22 +109,3 @@ export default class ProductManager {
 
 }
 
-/* const product = new ProductManager() 
-
-product.addProduct("Caramelo", "Dulce", 20, "thumbnail1", "12F24R", 100)
-product.addProduct("Jugo", "Manzana", 160, "thumbnail1", "12JG44M", 100)
-product.addProduct("Alfajor", "Chocoalte", 140, "thumbnail1", "12AFJ54C", 100)  
-product.addProduct("Sandwich", "Tomtae", 200, "thumbnail1", "12SDJ4T", 100)  
-product.addProduct("Gaseosa", "Cola", 150, "thumbnail1", "12GSA95C", 100)  
-
-console.log(product.getProducts())
-
-console.log("producto por id", product.getProductById(1))
-
-product.updateProduct(2,"description", "Agridulce")  
-console.log(product.getProducts())
-
-
-console.log(product.getProducts()) 
-
-console.log("producto por id", product.getProductById(4)) */
