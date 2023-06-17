@@ -1,12 +1,12 @@
 import express from 'express';
 import cart from "./routes/cart.router.js"
 import products from "./routes/products.router.js"
-import ProductManager from './models/product.js'
+
 
 const app = express()
 const port = 8080
 
-import products from "./data/products.json" assert { type: "json" };
+import { Server } from "socket.io";
 
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
@@ -28,7 +28,7 @@ app.get('/', (req,res) => {
     res.send("HOME")
 })
 
-app.listen(port, () => {
+const httpServer = app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
 
