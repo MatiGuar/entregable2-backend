@@ -1,66 +1,102 @@
 import { Router } from "express";
-import ProductManager from "../models/product.js";
+import { productModel } from "../dao/mongo/models/product.model.js";
 
-const productManager = new ProductManager()
-const router = Router ()
+const products = Router();
 
-router.get('/', async (req,res) =>{
-    try{
-        const {limit} = req.query
-        const products = await productManager.getProducts()
-        if (limit) {
-                const productLimit = products.slice(0, limit)
-                return res.status(200).json(productLimit)
-        }
-        return res.status(200).json(products)
-    }catch (error){
-        return res.status(500).json({error: error.message})
-    }
-})
-router.get('/:id', async (req,res) => {
-    try {
-        const {pid} = req.params
-        const id = parseInt(pid)
-        const product = await productManager.getProductById(id)
-        return res.status(200).json(product)
-    }catch (error) {
-        return res.status(500).json({error: error.message})
-    }
-})
 
-router.post('/', async (req,res) => {
-    try {
-        const { title, description, code, price, status, stock, category } = req.body;
-        const result = products.addProduct(title, description, code, price, status, stock, category);
+products.get("/", async (req, res) => {
+  try {
+    const result = await productModel.find();
+		return res.status(200).json({ status: "success", payload: result });
+	} catch (err) {
+		return res.status(500).json({ error: err.message });
+	};
+});
 
-        return res.status(200).json(result)
-    } catch (error) {
-        return res.status(500).json({error: error.message})
-    }
-})
 
-router.put('/:id', async (req,res)=>{
-    try {
-        const {pid} = req.params
-        const id = parseInt(pid)
-        const update = req.body
-        const putResp =  productManager.updateProduct(id, update)
-        return res.status(200).json(putResp)
-    }catch (error) {
-        return res.status(500).json({error: error.message})
-    }
-})
+products.get("/:id", async (req, res) => {
+  try {
+		const { id } = req.params;
+    const result = await productModel.findById(id);
 
-router.delete('/', async (req,res)=> { 
-        try {
-            const {pid} = req.params
-            const id = parseInt(pid)
-            const deleteResp =  productManager.deleteProduct(id)
-            return res.status(200).json(deleteResp)
-        }catch (error) {
-            return res.status(500).json({error: error.message})
-        }
-   
-})
+		if (!result) {
+			return res.status(200).send(`Wrong ID`);
+		};
 
-export default router
+		return res.status(200).json({ status: "success", payload: result });
+	} catch (err) {
+		return res.status(500).json({ error: err.message });
+	};
+});
+
+
+products.post("/", async (req, res) => {
+  try {
+		const { title, description, code, price, stock, category } = req.body;
+
+		if (!title || !description || !code || !price || !stock || !category || !price ) {
+			return res.status(200).send(`Please complete all the fields to create a product`);
+		};
+
+		const result = await productModel.create({
+			title,
+			description,
+			code,
+			price,
+			stock,
+			category,
+		});
+
+		return res.status(200).json({ status: "success", payload: result });
+	} catch (err) {
+		return res.status(500).json({ error: err.message });
+	};
+});
+
+products.put("/:id", async (req, res) => {
+  try {
+		const { id } = req.params;
+		const { title, description, code, price, stock, category } = req.body;
+
+		const product = await productModel.findById(id);
+
+		if (!product) {
+			return res.status(200).send(`Wrong ID`);
+		}
+
+		if (!title || !description || !code || !price || !stock || !category || !price ) {
+			return res.status(200).send(`Please complete all the fields to update a product`);
+		};
+
+		const newproduct = {
+			title,
+			description,
+			code,
+			price,
+			stock,
+			category,
+		};
+
+		await productModel.updateOne({ _id: id}, newproduct);
+
+		const result = await productModel.findById(id);
+		return res.status(200).json({ status: "success", payload: result });
+	} catch (err) {
+		return res.status(500).json({ error: err.message });
+	};
+});
+
+
+products.delete("/:id", async (req, res) => {
+  try {
+		const { id } = req.params;
+		await productModel.deleteOne({ _id: id});
+
+		const result = await productModel.find();
+		return res.status(200).json({ status: "success", payload: result });
+	} catch (err) {
+		return res.status(500).json({ error: err.message });
+	};
+});
+
+export default products;
