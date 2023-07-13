@@ -14,7 +14,7 @@ carts.get("/", async (req, res) => {
 	}
 });
 
-// Endpoint para obtener un carrito según ID:
+
 carts.get("/:id", async (req, res) => {
 	try {
 		const { id } = req.params;

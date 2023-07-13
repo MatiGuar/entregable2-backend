@@ -7,6 +7,10 @@ import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import { messageModel } from './dao/mongo/models/message.model.js';
 import mongoose from "mongoose";
+import messagesRoute from "./routes/messages.router.js";
+import cookiesRoute from "./routes/cookies.router.js";
+import sessionsRoute from "./routes/sessions.router.js";
+
 
 import products from "./data/product.json" assert { type: "json" };
 
@@ -29,6 +33,9 @@ app.use(express.urlencoded({extended:true}))
 app.use("/static", express.static("../public"))
 app.use("/api/products", productsRoute)
 app.use("/api/cart", cartsRoute)
+app.use("/cookies", cookiesRoute);
+app.use("/sessions", sessionsRoute);
+app.use("/messages", messagesRoute);
 app.use("/", viewsRoute);
 
 
@@ -42,28 +49,33 @@ const httpServer = app.listen(port, () => {
 })
 
 const io = new Server(httpServer);
-io.on("connection", (socket) => {
-	console.log("New client connected");
+
+io.on("connection", async (socket) => {
+	console.log(`Client ${socket.id} connected`);
 
 	socket.emit("products", products);
 
-	io.emit("messagesLogs", messages);
+	socket.on("user", async (data) => {
+		await messageModel.create({
+			user: data.user,
+			message: data.message,
+		});
 
-	socket.on("user", data => {
-		messages.push(data);
-		io.emit("messagesLogs", messages);
+		const messagesDB = await messageModel.find();
+		io.emit("messagesDB", messagesDB);
 	});
 
-	socket.on("message", data => {
-		messages.push(data);
-		io.emit("messagesLogs", messages);
-		messageModel.create({
-      user: data.user,
-      message: data.message,
+	socket.on("message", async (data) => {
+		await messageModel.create({
+			user: data.user,
+			message: data.message,
 		});
+
+		const messagesDB = await messageModel.find();
+		io.emit("messagesDB", messagesDB);
 	});
 
 	socket.on("disconnect", () => {
-		console.log("Client disconnected");
+		console.log(`Client ${socket.id} disconnected`);
 	});
 });
