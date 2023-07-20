@@ -3,7 +3,6 @@ import { messageModel } from "../dao/mongo/models/message.model.js";
 
 const messages = Router();
 
-
 messages.get("/", async (req, res) => {
 	try {
 		const result = await messageModel.find();
@@ -12,6 +11,7 @@ messages.get("/", async (req, res) => {
 		return res.status(500).json({ error: err.message });
 	};
 });
+
 
 messages.delete("/:id", async (req, res) => {
 	try {
