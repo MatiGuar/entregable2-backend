@@ -11,8 +11,8 @@ import mongoose from "mongoose";
 import messagesRoute from "./routes/messages.router.js";
 import cookiesRoute from "./routes/cookies.router.js";
 import sessionsRoute from "./routes/sessions.router.js";
-import passport from "passport";
-import initializePassport from "./config/passport.config.js";
+/* import passport from "passport"; */
+/* import initializePassport from "./config/passport.config.js"; */
 
 import products from "./data/product.json" assert { type: "json" };
 
@@ -27,9 +27,9 @@ const port = 8080
 
 
 
-initializePassport();
-app.use(passport.initialize());
-app.use(passport.session());
+/* initializePassport(); */
+/* app.use(passport.initialize());
+app.use(passport.session()); */
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
