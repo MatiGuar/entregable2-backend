@@ -11,10 +11,12 @@ import mongoose from "mongoose";
 import messagesRoute from "./routes/messages.router.js";
 import cookiesRoute from "./routes/cookies.router.js";
 import sessionsRoute from "./routes/sessions.router.js";
-/* import passport from "passport"; */
-/* import initializePassport from "./config/passport.config.js"; */
-
+import passport from "passport"; 
+import initializePassport from "./config/passport.config.js"; 
+import session from "express-session"
 import products from "./data/product.json" assert { type: "json" };
+
+
 
 
 
@@ -26,10 +28,16 @@ const app = express()
 const port = 8080
 
 
-
-/* initializePassport(); */
-/* app.use(passport.initialize());
-app.use(passport.session()); */
+app.use(
+    session({
+      secret: "secreto",
+      resave: false,
+      saveUninitialized: false,
+    })
+)
+initializePassport(); 
+app.use(passport.initialize());
+app.use(passport.session()); 
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
 app.set("view engine", "handlebars");
