@@ -48,4 +48,13 @@ sessions.post("/logout", (req, res) => {
 	};
 });
 
+sessions.get('/github', passport.authenticate('github'), async (req, res) => {});
+
+sessions.get('/githubCallback', passport.authenticate('github'), async (req, res) => {
+		req.session.user = req.user;
+		res.redirect('/');
+	}
+);
+
+
 export default sessions;
