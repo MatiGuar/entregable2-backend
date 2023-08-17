@@ -1,11 +1,17 @@
+import { userModel } from '../dao/mongo/models/user.model.js';
+import { adminModel } from '../dao/mongo/models/admin.model.js';
+import { createHash, isValidPassword } from '../utils/hash.utils.js';
+import cookieExtractor from '../utils/cookieExtractor.utils.js';
 import passport from 'passport';
 import local from 'passport-local';
 import GitHubStrategy from 'passport-github2';
-import { userModel } from '../dao/mongo/models/user.model.js';
-import { createHash, isValidPassword } from '../utils/hash.utils.js';
-import { adminModel } from '../dao/mongo/models/admin.model.js';
 import jwt from 'passport-jwt';
-import cookieExtractor from '../utils/cookieExtractor.utils.js';
+import config from '../../config.js'
+
+const jwtSecret = config.JWT_SECRET;
+const githubClientId = config.GITHUB_CLIENT_ID;
+const githubClientSecret = config.GITHUB_CLIENT_SECRET;
+const githubCallbackUrl = config.GITHUB_CALLBACK_URL;
 
 const LocalStrategy = local.Strategy;
 
@@ -18,7 +24,7 @@ const initializePassport = () => {
 		new JWTStrategy(
 			{
 				jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
-				secretOrKey: "<SECRET>"
+				secretOrKey: jwtSecret,
 			},
 			async (jwt_payload, done) => {
 				try {
@@ -113,9 +119,9 @@ const initializePassport = () => {
 		'github',
 		new GitHubStrategy(
 			{
-				clientID: "<CLIENTID>",
-				clientSecret: "<CLIENTSECRET>",
-				callbackURL: '<CALLBACKURL>',
+				clientID: githubClientId,
+				clientSecret: githubClientSecret,
+				callbackURL: githubCallbackUrl,
 			},
 			async (accesToken, refreshToken, profile, done) => {
 				try {

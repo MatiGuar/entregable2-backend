@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { productModel } from "../dao/mongo/models/product.model.js";
 import { cartModel } from "../dao/mongo/models/cart.model.js";
+import { authToken } from "../utils/jwt.utils.js";
+import config from '../../config.js'
+import cookieParser from "cookie-parser";
 
 const views = Router();
+const cookieSecret = config.COOKIE_SECRET;
 
-import cookieParser from "cookie-parser";
-views.use(cookieParser("Bv@pU^W6HY79"));
 
+views.use(cookieParser(cookieSecret));
 
 async function cartCookie(req, res) {
 	let { cart } = req.signedCookies;
@@ -79,7 +82,6 @@ views.get("/", async (req, res) => {
 	};
 });
 
-
 views.get("/products", async (req, res) => {
 	try {
 		if(!req.session.user){
@@ -92,17 +94,14 @@ views.get("/products", async (req, res) => {
 		const cart = await cartCookie(req, res);
 		let { limit, page, query, sort } = req.query;
 
-	
 		if (page == undefined || page == "" || page < 1 || isNaN(page)) {
 			page = 1;
 		};
 
-		
 		if (limit == undefined || limit == "" || limit <= 1 || isNaN(limit)) {
 			limit = 10;
 		};
 
-		
 		if (sort == undefined || (sort !== 'asc' && sort !== 'desc') || !isNaN(sort)) {
 			sort = "asc";
 		};
@@ -127,16 +126,14 @@ views.get("/products", async (req, res) => {
 
 		
 		if (sort === "asc") {
-			
 			filteredProducts.data.sort((a, b) => a.price - b.price);
 			products.data.sort((a, b) => a.price - b.price);
 		} else {
-			
 			filteredProducts.data.sort((a, b) => b.price - a.price);
 			products.data.sort((a, b) => b.price - a.price);
 		}
 
-	
+		
 		if (products.data.length <= 0) {
 			return res.status(200).send(`There's no products for this search`);
 		};
@@ -145,6 +142,7 @@ views.get("/products", async (req, res) => {
 			return res.status(200).render("products", {
 				status: "success",
 				payload: filteredProducts.data,
+				user: req.session.user,
 				page,
 				limit,
 				query,
@@ -163,6 +161,7 @@ views.get("/products", async (req, res) => {
 		return res.status(200).render("products", {
 			status: "success",
 			payload: products.data,
+			user: req.session.user,
 			page,
 			limit,
 			query,
@@ -225,7 +224,6 @@ views.get("/realtimeproducts", (req, res) => {
 	};
 });
 
-
 views.get("/chat", (req, res) => {
 	try {
 		return res.status(200).render("chat", {
@@ -262,6 +260,10 @@ views.get("/carts/:cid", async (req, res) => {
 	} catch (err) {
 		return res.status(500).json({ error: err.message });
 	};
+});
+
+views.get("/private", authToken, (req, res) => {
+	res.send({status: "Private", user: req.user})
 });
 
 export default views;

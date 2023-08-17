@@ -20,6 +20,7 @@ import CustomUsersRouter from './routes/customUsers.router.js';
 import CustomSessionsRouter from './routes/customSessions.router.js';
 import MongoStore from 'connect-mongo';
 import morgan from 'morgan';
+import forkRoute from './routes/fork.router.js';
 
 const customUsersRouter = new CustomUsersRouter();
 const customSessionsRouter = new CustomSessionsRouter();
@@ -66,6 +67,8 @@ app.use("/messages", messagesRoute)
 app.use("/", viewsRoute)
 app.use('/api/custom/users', customUsersRouter.getRouter());
 app.use('/api/custom/sessions', customSessionsRouter.getRouter());
+app.use('/api/fork', forkRoute);
+router(app);
 
 
 

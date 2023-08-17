@@ -1,8 +1,11 @@
 import { Router } from "express";
 import cookieParser from "cookie-parser";
+import config from '../../config.js'
+
+const cookieSecret = config.COOKIE_SECRET;
 
 const cookies = Router();
-cookies.use(cookieParser("CoderCode"));
+cookies.use(cookieParser(cookieSecret));
 
 
 cookies.get("/set", (req, res) => {
@@ -25,6 +28,7 @@ cookies.get("/get", (req, res) => {
 		return res.status(500).json({ error: err.message });
 	};
 });
+
 
 cookies.get("/delete", (req, res) => {
 	try {
