@@ -8,6 +8,7 @@ import GitHubStrategy from 'passport-github2';
 import jwt from 'passport-jwt';
 import config from '../config/enviroment.config.js';
 
+
 const jwtSecret = config.JWT_SECRET;
 const githubClientId = config.GITHUB_CLIENT_ID;
 const githubClientSecret = config.GITHUB_CLIENT_SECRET;

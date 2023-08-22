@@ -1,6 +1,6 @@
 import authController from "../controllers/auth.controller.js";
 import adminController from "../controllers/admin.controller.js";
-import viewsRoute from './views.router.js';
+import viewsRoute from './view.router.js';
 import sessionsRoute from './sessions.router.js';
 import productsRoute from './products.router.js';
 import cartsRoute from './carts.router.js';

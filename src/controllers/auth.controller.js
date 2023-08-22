@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { generateToken } from '../utils/jwt.utils.js';
+import { Strategy } from 'passport-local';
 
 const router = Router();
 

@@ -3,9 +3,10 @@ import __dirname from "./utils.js"
 import handlebars from "express-handlebars"
 import mongoose from "mongoose"
 import passport from "passport" 
+import router from './routes/router.js';
 import initializePassport from "./config/passport.config.js" 
 import session from "express-session"
-/* import products from "./data/product.json" assert { type: "json" } */
+import config from './config/enviroment.config.js';
 import cookieParser from 'cookie-parser';
 import MongoStore from 'connect-mongo';
 import morgan from 'morgan';
