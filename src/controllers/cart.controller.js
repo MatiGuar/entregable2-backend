@@ -1,168 +1,99 @@
-import { cartModel } from '../dao/mongo/models/cart.model.js';
-import { productModel } from "../dao/mongo/models/product.model.js";
+import { cartsRepository } from '../repositories/repository.js';
 
-const carts = async (req, res) => {
+export const carts = async (req, res) => {
 	try {
-		let result = await cartModel.find();
-		return res.status(200).json({ status: "success", payload: result });
+		const payload = await cartsRepository.getCarts();
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', carts: payload });
 	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
 };
 
-const cart = async (req, res) => {
-	try {
-		const { id } = req.params;
-		let result = await cartModel.findById(id).populate('products._id');
-
-		if (!result) {
-			return res.status(200).send(`There's no cart with ID ${id}`);
-		};
-
-		return res.status(200).json({ status: "success", payload: result });
-	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
-};
-
-const createCart = async (req, res) => {
-	try {
-		const result = await cartModel.create({
-			products: [],
-		});
-
-		return res.status(200).json({ status: "success", payload: result });
-	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
-};
-
-const addProduct = async (req, res) => {
-	try {
-		const { cid, pid } = req.params;
-		const newProduct = await productModel.findById(pid);
-		const cart = await cartModel.findById(cid);
-
-		const productInCart = cart.products.find(product => product._id.toString() === newProduct.id);
-
-		if (!productInCart) {
-			const create = {
-				$push: { products: { _id: newProduct.id, quantity: 1 } },
-			};
-			await cartModel.findByIdAndUpdate({ _id: cid }, create);
-
-			const result = await cartModel.findById(cid);
-			return res.status(200).json({ status: "success", payload: result });
-		};
-
-		await cartModel.findByIdAndUpdate(
-			{ _id: cid },
-			{ $inc: { "products.$[elem].quantity": 1 } },
-			{ arrayFilters: [{ "elem._id": newProduct.id }] }
-		);
-
-		const result = await cartModel.findById(cid);
-		return res.status(200).json({ status: "success", payload: result });
-	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
-};
-
-const updateCart = async (req, res) => {
+export const cart = async (req, res) => {
 	try {
 		const { cid } = req.params;
-		let newCart = req.body;
-		const cart = await cartModel.findById(cid);
-
-		newCart.forEach( async product => {
-			if (product.quantity < 1) {
-				console.log(`Invalid value ${product.quantity} for quantity, new value was setted on 1`);
-				product.quantity = 1
-			};
-
-			const existProduct = await productModel.findById(product._id);
-			if(existProduct && existProduct.stock > product.quantity) {
-				const productInCart = cart.products.find(productInCart => productInCart.id === existProduct.id);
-
-				if (!productInCart) {
-					const create = {
-						$push: { products: { _id: existProduct.id, quantity: product.quantity } },
-					};
-					await cartModel.findByIdAndUpdate({ _id: cid }, create);
-				};
-
-				await cartModel.findByIdAndUpdate(
-					{ _id: cid },
-					{ $set: { "products.$[elem].quantity": product.quantity } },
-					{ arrayFilters: [{ "elem._id": existProduct.id }] }
-				);
-			};
-		});
-
-		const result = await cartModel.findById(cid);
-		return res.status(200).json({ status: "success", payload: result });
+		const payload = await cartsRepository.getCart(cid);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
 	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
 };
 
-const updateProduct = async (req, res) => {
+export const insertCart = async (req, res) => {
+	try {
+		const payload = await cartsRepository.createCart();
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
+	} catch (err) {
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
+};
+
+export const insertProduct = async (req, res) => {
 	try {
 		const { cid, pid } = req.params;
-		let newQuantity = req.body.quantity;
-		const product = await productModel.findById(pid);
-
-		if(newQuantity > product.stock) {
-			console.log(`Insufficient stock ${newQuantity} for product ${product._id}, max ${product.stock}`);
-			newQuantity = product.stock;
-		}
-
-		await cartModel.findByIdAndUpdate(
-			{ _id: cid },
-			{ $set: { "products.$[elem].quantity": newQuantity } },
-			{ arrayFilters: [{ "elem._id": pid }] }
-		);
-
-		const result = await cartModel.findById(cid);
-		return res.status(200).json({ status: "success", payload: result });
+		const payload = await cartsRepository.createProduct(cid, pid);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
 	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
 };
 
-const deleteCart = async (req, res) => {
+export const editCart = async (req, res) => {
 	try {
-		const { id } = req.params;
-		await cartModel.findByIdAndUpdate(id, {products: []});
-
-		const result = await cartModel.find();
-		return res.status(200).json({ status: "success", payload: result });
+		const { cid } = req.params;
+		const newCart = req.body;
+		const payload = await cartsRepository.updateCart(cid, newCart);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
 	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
 };
 
-const deleteProduct = async (req, res) => {
+export const editProduct = async (req, res) => {
 	try {
 		const { cid, pid } = req.params;
-		await cartModel.findByIdAndUpdate(cid, {
-			$pull: { products: { _id: pid } }
-		})
-
-		const result = await cartModel.find();
-		return res.status(200).json({ status: "success", payload: result });
+		const { quantity } = req.body;
+		const payload = await cartsRepository.updateProduct(cid, pid, quantity);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
 	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
 };
 
-export default {
-  carts,
-  cart,
-  createCart,
-  addProduct,
-  updateCart,
-  updateProduct,
-  deleteCart,
-  deleteProduct,
+export const clearCart = async (req, res) => {
+	try {
+		const { cid } = req.params;
+		const payload = await cartsRepository.deleteCart(cid);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
+	} catch (err) {
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
+};
+
+export const clearProduct = async (req, res) => {
+	try {
+		const { cid, pid } = req.params;
+		const payload = await cartsRepository.deleteProduct(cid, pid);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
+	} catch (err) {
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
+};
+
+export const purchase = async (req, res) => {
+	try {
+		const payload = await cartsRepository.purchaseCart(req, res);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.status(200).json({ status: 'success', cart: payload });
+	} catch (err) {
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
 };

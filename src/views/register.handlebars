@@ -1,25 +1,26 @@
-<div class="products-container">
-	<h1 class="products-title">Register</h1>
+<div class='register-container'>
 
-<div>
-  <form id="registerForm">
+	<p>Register</p>
+	<a href='/login'>Sign in</a>
+	<a href='/api/sessions/github'>Github</a>
 
-    <label>First name</label>
-    <input type="text" name="first_name">
+	<form class='register-form'>
 
-    <label>Last name</label>
-    <input type="text" name="last_name">
+		<label>First name</label>
+		<input type='text' name='first_name' required />
 
-    <label>Email</label>
-    <input type="email" name="email">
+		<label>Last name</label>
+		<input type='text' name='last_name' required />
 
-    <label>Password</label>
-    <input type="password" name="password">
+		<label>Email</label>
+		<input type='email' name='email' required />
 
-    <input type="submit" value="Send">
-  </form>
+		<label>Password</label>
+		<input type='password' name='password' required />
+
+		<input type='submit' value='Send' class='register-button' />
+	</form>
+
 </div>
 
-</div>
-
-<script src="/js/register.js"></script>
+<script src='/js/register.js'></script>

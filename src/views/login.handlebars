@@ -1,22 +1,19 @@
-<div class="products-container">
-	<h1 class="products-title">Login</h1>
+<div class='login-container'>
 
-<div>
-  <form id="loginForm">
+	<p>Login</p>
+	<a href='/register'>Sign up</a>
+	<a href='/api/sessions/github'>Github</a>
 
-    <label>Email</label>
-    <input type="email" name="email">
+	<form class='login-form'>
+		<label>Email</label>
+		<input type='email' name='email' required />
 
-    <label>Password</label>
-    <input type="password" name="password">
+		<label>Password</label>
+		<input type='password' name='password' required />
 
-    <input type="submit" value="Send">
-  </form>
-</div>
-	 <div>
-    <p>Dont have a user?</p>
-    <a href="/register">Register here</a>
-  </div>
+		<input type='submit' value='Send' class='login-button' />
+	</form>
+
 </div>
 
-<script src="/js/login.js"></script>
+<script src='/js/login.js'></script>

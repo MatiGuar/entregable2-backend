@@ -1,12 +1,20 @@
-import { Router } from "express";
-import productsController from "../controllers/product.controller.js"
+import { Router } from 'express';
+import {
+	product,
+	products,
+	insertProduct,
+	editProduct,
+	eraseProduct,
+} from '../controllers/products.controller.js';
 
-const products = Router();
+import roleAuth from '../middlewares/role.middleware.js';
 
-products.get("/", productsController.products);
-products.get("/:id", productsController.product);
-products.post("/", productsController.createProduct);
-products.put("/:id", productsController.updateProduct);
-products.delete("/:id", productsController.deleteProduct);
+const router = Router();
 
-export default products;
+router.get('/', products);
+router.get('/:pid', product);
+router.post('/', roleAuth('admin'), insertProduct);
+router.put('/:pid', roleAuth('admin'), editProduct);
+router.delete('/:pid', roleAuth('admin'), eraseProduct);
+
+export default router;

@@ -1,95 +1,64 @@
-const login = async (req, res) => {
-	try {
-		req.session.user = {
-			first_name: req.user.first_name,
-			last_name: req.user.last_name,
-			email: req.user.email,
-			role: req.user.role,
-		};
-		return res.status(200).send({status: 'success', response: 'User loged'});
-	} catch (err) {
-		return res.status(500).json({ error: err.message });
-	};
-};
+import { sessionsRepository } from '../repositories/repository.js';
 
-const loginjwt = async (req, res) => {
+export const login = async (req, res) => {
 	try {
-		req.session.user = {
-			first_name: req.user.first_name,
-			last_name: req.user.last_name,
-			email: req.user.email,
-			role: req.user.role,
-		};
-		const access_token = generateToken(user);
-		return res.status(200).send({ status: 'success', token: access_token });
+		const payload = await sessionsRepository.getLogin(req, res);
+		if (typeof(payload) == 'string') return res.status(404).send(payload);
+		return res.status(200).json({ status: 'success', user: payload });
 	} catch (err) {
-		return res.status(500).json({ error: err.message });
+		return res.status(500).json({ status: 'success', error: err.message });
 	}
 };
 
-const register = async (req, res) => {
+export const register = async (req, res) => {
 	try {
-		req.session.user = {
-			first_name: req.user.first_name,
-			last_name: req.user.last_name,
-			email: req.user.email,
-			role: req.user.role,
-		};
-		return res
-			.status(200)
-			.send({ status: 'success', response: 'User created' });
+		const payload = await sessionsRepository.getRegister(req, res);
+		if (typeof(payload) == 'string') return res.status(404).send(payload);
+		return res.status(200).json({ status: 'success', user: payload });
 	} catch (err) {
-		return res.status(500).json({ status: 'error', response: err.message });
+		return res.status(500).json({ status: 'error', error: err.message });
 	}
 };
 
-const logout = async (req, res) => {
+export const current = async (req, res) => {
 	try {
-		req.session.destroy((err) => {
-			if (!err) {
-				return res.redirect("/")
-				// return res.status(200).render('login', {
-				// 	style: 'login.css',
-				// 	documentTitle: 'Login',
-				// });
-			}
-
-			return res.status(500).send({ status: `Logout error`, payload: err });
-		});
+		const { user } = req.session;
+		if (!user) return res.redirect('/');
+		const payload = await sessionsRepository.getCurrent(req, res);
+		if (typeof(payload) == 'string') return res.status(404).send(payload);
+		return res.status(200).json({ status: 'success', user: payload });
 	} catch (err) {
-		return res.status(500).json({ error: err.message });
+		return res.status(500).json({ status: 'error', error: err.message });
 	}
 };
 
-const current = async (req, res) => {
+
+export const github = async (req, res) => {
 	try {
-		req.session.user = {
-			first_name: req.user.first_name,
-			last_name: req.user.last_name,
-			email: req.user.email,
-			role: req.user.role,
-		};
-		return res
-			.status(200)
-			.send({ status: 'success', response: 'User created' });
+		const payload = await sessionsRepository.getGithub(req, res);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.redirect('/');
 	} catch (err) {
-		return res.status(500).json({ status: 'error', response: err.message });
+		return res.status(500).json({ status: 'error', error: err.message });
 	}
 };
 
-const github = async (req, res) => {}
+export const githubCallback = async (req, res) => {
+	try {
+		const payload = await sessionsRepository.getGithubCallback(req, res);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.redirect('/');
+	} catch (err) {
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
+};
 
-const githubCallback = async (req, res) => {
-	req.session.user = req.user;
-	res.redirect('/');
-}
-
-export default {
-	login,
-	loginjwt,
-	register,
-	logout,
-	current,
-	github,
-	githubCallback,
+export const logout = async (req, res) => {
+	try {
+		const payload = await sessionsRepository.getLogout(req, res);
+		if (typeof(payload) == 'string') return res.status(404).json({ status: 'error', message: payload });
+		return res.redirect('/');
+	} catch (err) {
+		return res.status(500).json({ status: 'error', error: err.message });
+	}
 };

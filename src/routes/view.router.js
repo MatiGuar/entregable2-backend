@@ -1,15 +1,24 @@
-import { Router } from "express";
-import { authToken } from "../utils/jwt.utils.js";
-import viewsController from "../controllers/views.controller.js"
+import { Router } from 'express';
+import {
+	home,
+	login,
+	register,
+	chat,
+	products,
+	product,
+	cart,
+} from '../controllers/views.controller.js';
 
-const views = Router();
+import roleAuth from '../middlewares/role.middleware.js';
 
-views.get("/", viewsController.home);
-views.get("/login", viewsController.login);
-views.get("/register", viewsController.register);
-views.get("/products", viewsController.products);
-views.get("/product", viewsController.product);
-views.get("/carts", viewsController.carts);
-views.get("/exclusive", authToken, viewsController.exclusive);
+const router = Router();
 
-export default views;
+router.get('/', home);
+router.get('/login', login);
+router.get('/register', register);
+router.get('/chat', roleAuth('user'), chat);
+router.get('/products', products);
+router.get('/product/:pid', product);
+router.get('/cart/:cid', cart);
+
+export default router;
