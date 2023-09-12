@@ -1,7 +1,7 @@
 import { userModel } from '../dao/mongo/models/user.model.js';
 import { adminModel } from '../dao/mongo/models/admin.model.js';
 import { hashPassword, isValidPassword } from '../utils/hash.utils.js';
-import config from '../config/environment.config.js';
+import config from '../config/enviroment.config.js';
 import passport from 'passport';
 import local from 'passport-local';
 import GitHubStrategy from 'passport-github2';

@@ -5,4 +5,4 @@ const messageSchema = new mongoose.Schema({
   message: String,
 });
 
-export const messageModel = mongoose.model(messagesCollection, messageSchema);
+export const messageModel = mongoose.model("Messages", messageSchema);

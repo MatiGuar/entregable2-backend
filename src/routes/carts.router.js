@@ -9,7 +9,7 @@ import {
 	clearCart,
 	clearProduct,
 	purchase,
-} from '../controllers/carts.controller.js';
+} from '../controllers/cart.controller.js';
 
 import roleAuth from '../middlewares/role.middleware.js';
 
