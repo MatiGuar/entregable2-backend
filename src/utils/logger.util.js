@@ -21,10 +21,11 @@ const customLevelOptions = {
 };
 
 dotenv.config();
-const environment = process.env.NODE_ENV;
+const enviroment = process.env.NODE_ENV;
+if (!enviroment) enviroment = 'development';
 let logger;
 
-if (environment == 'production') {
+if (enviroment == 'production') {
 	logger = winston.createLogger({
 		levels: customLevelOptions.levels,
 		transports: [
@@ -47,7 +48,7 @@ if (environment == 'production') {
 			}),
 		],
 	});
-} else if (environment == 'development') {
+} else if (enviroment == 'development') {
 	logger = winston.createLogger({
 		levels: customLevelOptions.levels,
 		transports: [

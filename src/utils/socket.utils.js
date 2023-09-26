@@ -9,7 +9,6 @@ function setupSocket(httpServer) {
 	io.on('connection', async (socket) => {
 		logger.info(`Client ${socket.id} connected`);
 
-		// Buscar productos en DB, escuchar cambios y enviar data:
 		const products = await productModel.find().lean();
 		io.emit('products', products);
 
@@ -18,7 +17,6 @@ function setupSocket(httpServer) {
 			io.emit('products', products);
 		});
 
-		// Recibir usuarios, mensajes y crear entrada en DB:
 		socket.on('user', async (data) => {
 			await messageModel.create({
 				user: data.user,

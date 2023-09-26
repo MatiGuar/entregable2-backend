@@ -1,18 +1,19 @@
-const socket = io();
+import logger from '../../utils/logger.util.js';
 
-function updateProducts(products) {
-  const ul = document.querySelector("ul");
-  ul.innerHTML = '';
+const productsForm = document.querySelectorAll('.product-form');
 
-  products.forEach(product => {
-    const li = document.createElement('li');
-    li.textContent = product.title;
-    li.className = "real-time-item";
-    ul.appendChild(li);
-  });
-};
-
-
-socket.on("products", products => {
-  updateProducts(products);
+productsForm.forEach(productForm => {
+	productForm.addEventListener('submit', e => {
+		e.preventDefault();
+		const cart = productForm.getAttribute('cart');
+		const product = productForm.getAttribute('product');
+		fetch(`/api/carts/${cart}/product/${product}`, {
+			method: 'POST',
+		})
+			.then(res => {
+				if (res.status !== 200) return;
+				alert('Added');
+			})
+			.catch(err => logger.error(`Catch error: ${err}`));
+	});
 });

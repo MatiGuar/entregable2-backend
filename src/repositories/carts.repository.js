@@ -30,25 +30,26 @@ class CartsRepository {
 		}
 	}
 
-	async createProduct(cid, pid) {
+	async createProduct(req, res, cid, pid) {
 		try {
-			return await this.dao.createProductDao(cid, pid);
+			return await this.dao.createProductDao(req, res, cid, pid);
 		} catch (error) {
 			return `${error}`;
 		}
 	}
 
-	async updateCart(cid, newCart) {
-    try {
-      return await this.dao.updateCartDao(cid, newCart);
-    } catch (erroror) {
-      return erroror;
-    }
-  }
+	async updateCart(req, res, cid, newCart) {
+		try {
+			return await this.dao.updateCartDao(req, res, cid, newCart);
+		} catch (erroror) {
+			return erroror;
+		}
+	}
 
 	async updateProduct(cid, pid, quantity) {
 		try {
-			if (quantity < 1 || typeof(quantity) != 'number') return `'${quantity}' is an invalid value for quantity.`
+			if (quantity < 1 || typeof quantity != 'number')
+				return `'${quantity}' is an invalid value for quantity.`;
 			return await this.dao.updateProductDao(cid, pid, quantity);
 		} catch (error) {
 			return `${error}`;

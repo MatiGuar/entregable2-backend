@@ -8,7 +8,7 @@ import GitHubStrategy from 'passport-github2';
 
 const githubClientId = config.GITHUB_CLIENT_ID;
 const githubClientSecret = config.GITHUB_CLIENT_SECRET;
-const githubCallbackUrl = config.GITHUB_CALLBACK_URL;
+
 
 const LocalStrategy = local.Strategy;
 const initializePassport = () => {
@@ -20,12 +20,14 @@ const initializePassport = () => {
 				try {
 					if (username == 'adminCoder@coder.com') {
 						const admin = await adminModel.findOne({ email: username });
-						if (!admin || !isValidPassword(admin, password)) return done(null, false, `Invalid credentials.`);
+						if (!admin || !isValidPassword(admin, password))
+							return done(null, false, `Invalid credentials.`);
 						return done(null, admin);
-					};
+					}
 
 					const user = await userModel.findOne({ email: username });
-					if (!user || !isValidPassword(user, password)) return done(null, false, `Invalid credentials.`);
+					if (!user || !isValidPassword(user, password))
+						return done(null, false, `Invalid credentials.`);
 					return done(null, user);
 				} catch (err) {
 					return done(err);
@@ -40,18 +42,19 @@ const initializePassport = () => {
 			{ passReqToCallback: true, usernameField: 'email' },
 			async (req, username, password, done) => {
 				try {
-					if (username == 'adminCoder@coder.com') return done(null, false, `Can't create an admin account.`)
+					// if (username == 'adminCoder@coder.com')
+					// 	return done(null, false, `Can't create an admin account.`);
 
-					const user = await userModel.findOne({ email: username });
+					const user = await adminModel.findOne({ email: username });
 					if (user) return done(null, false, `Email already exist.`);
 
 					const { first_name, last_name } = req.body;
-					const newUser = await userModel.create({
+					const newUser = await adminModel.create({
 						first_name,
 						last_name,
 						email: username,
 						password: hashPassword(password),
-						role: 'user',
+						role: 'admin',
 					});
 					return done(null, newUser);
 				} catch (err) {
@@ -67,7 +70,7 @@ const initializePassport = () => {
 			{
 				clientID: githubClientId,
 				clientSecret: githubClientSecret,
-				callbackURL: githubCallbackUrl,
+				callbackURL: 'http://localhost:8080/api/sessions/githubCallback',
 			},
 			async (accesToken, refreshToken, profile, done) => {
 				try {

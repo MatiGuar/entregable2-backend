@@ -1,5 +1,5 @@
 import persistence from '../config/app.config.js';
-import environment from '../../db/db.js';
+import enviroment from '../../db/db.js';
 
 let productsDAO;
 
@@ -9,7 +9,7 @@ switch (persistence) {
 		productsDAO = MemoryDAO;
 		break;
 	case 'mongo':
-		environment();
+		enviroment();
 		const { default: MongoDAO } = await import('./mongo/products.mongo.js');
 		productsDAO = MongoDAO;
 		break;

@@ -32,7 +32,8 @@ class ProductsRepository {
 				!stock ||
 				!category ||
 				!price
-			) return `Please complete all the fields to update the product.`;
+			)
+				return `Please complete all the fields to update the product.`;
 			const product = new ProductDTO(newProduct);
 			return await this.dao.createProductDao(product);
 		} catch (error) {
@@ -51,7 +52,8 @@ class ProductsRepository {
 				!stock ||
 				!category ||
 				!price
-			) return `Please complete all the fields to update the product.`;
+			)
+				return `Please complete all the fields to update the product.`;
 			const product = new ProductDTO(newProduct);
 			return await this.dao.updateProductDao(pid, product);
 		} catch (error) {
@@ -59,9 +61,17 @@ class ProductsRepository {
 		}
 	}
 
-	async deleteProduct(pid) {
+	async deleteProduct(req, res, pid) {
 		try {
-			return await this.dao.deleteProductDao(pid);
+			return await this.dao.deleteProductDao(req, res, pid);
+		} catch (error) {
+			return `${error}`;
+		}
+	}
+
+	async generateProducts(req, res) {
+		try {
+			return await this.dao.generateProductsDao(req, res);
 		} catch (error) {
 			return `${error}`;
 		}

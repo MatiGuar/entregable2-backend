@@ -24,7 +24,7 @@ class ViewsMongoDAO {
 				cart,
 				style: 'home.css',
 				documentTitle: 'Home',
-			}
+			};
 			return payload;
 		} catch (error) {
 			return `${error}`;
@@ -37,7 +37,7 @@ class ViewsMongoDAO {
 				header: false,
 				style: 'login.css',
 				documentTitle: 'Login',
-			}
+			};
 			return payload;
 		} catch (error) {
 			return `${error}`;
@@ -50,7 +50,7 @@ class ViewsMongoDAO {
 				header: false,
 				style: 'register.css',
 				documentTitle: 'Register',
-			}
+			};
 			return payload;
 		} catch (error) {
 			return `${error}`;
@@ -65,7 +65,7 @@ class ViewsMongoDAO {
 				user,
 				style: 'chat.css',
 				documentTitle: 'Chat',
-			}
+			};
 			return payload;
 		} catch (error) {
 			return `${error}`;
@@ -96,11 +96,11 @@ class ViewsMongoDAO {
 				},
 				lean: true,
 			};
-	
+
 			const products = await productModel.paginate(query, options);
-			
+
 			if (products.data.length < 1) return `No products found for this search`;
-	
+
 			if (sort === 'asc') {
 				products.data.sort((a, b) => a.price - b.price);
 			} else {
@@ -124,7 +124,7 @@ class ViewsMongoDAO {
 				nextPage: products.nextPage,
 				documentTitle: 'Products',
 				style: 'products.css',
-			}
+			};
 			return payload;
 		} catch (error) {
 			return `${error}`;
@@ -146,7 +146,7 @@ class ViewsMongoDAO {
 				cart,
 				style: 'product.css',
 				documentTitle: 'Product',
-			}
+			};
 			return payload;
 		} catch (error) {
 			return `${error}`;
@@ -156,7 +156,10 @@ class ViewsMongoDAO {
 	async getCartDao(req, res) {
 		try {
 			const { cid } = req.params;
-			const cart = await cartModel.findById(cid).populate('products._id').lean();
+			const cart = await cartModel
+				.findById(cid)
+				.populate('products._id')
+				.lean();
 			if (!cart) return `No cart found with ID '${cid}'`;
 
 			const payload = {
@@ -166,10 +169,26 @@ class ViewsMongoDAO {
 				documentTitle: 'Cart',
 				helpers: {
 					multiply,
-					getTotal
+					getTotal,
 				},
 				payload: cart.products,
-			}
+			};
+			return payload;
+		} catch (error) {
+			return `${error}`;
+		}
+	}
+
+	async getRestoreDao(req, res) {
+		try {
+			let { restoreCookie } = req.signedCookies;
+			if (!restoreCookie) return res.redirect('/');
+			const { user } = req.session;
+			const payload = {
+				user,
+				style: 'restore.css',
+				documentTitle: 'Restore',
+			};
 			return payload;
 		} catch (error) {
 			return `${error}`;

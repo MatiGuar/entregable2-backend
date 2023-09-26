@@ -78,6 +78,26 @@ class SessionsMemoryDAO {
 			return `${error}`;
 		}
 	}
+	getRestoreCallbackDao(req, res) {
+		try {
+		} catch (error) {
+			return `${error}`;
+		}
+	}
+
+	getPremiumDao(req, res) {
+		try {
+		} catch (error) {
+			return `${error}`;
+		}
+	}
+
+	getUserDao(req, res) {
+		try {
+		} catch (error) {
+			return `${error}`;
+		}
+	}
 }
 
 const MemoryDAO = new SessionsMemoryDAO();
