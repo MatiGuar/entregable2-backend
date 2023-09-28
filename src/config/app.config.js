@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const enviroment = process.env.NODE_ENV;
+let enviroment = process.env.NODE_ENV;
 if (!enviroment) enviroment = 'development';
 
 let persistence;
